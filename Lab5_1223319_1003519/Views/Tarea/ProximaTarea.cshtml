@@ -1,0 +1,60 @@
+﻿@model Lab5_1223319_1003519.Models.Tareas
+
+@{
+    ViewBag.Title = "ProximaTarea";
+}
+
+@Html.ActionLink("Agregar Tarea", "Create", "Tarea")
+
+<h2>Proxima Tarea</h2>
+
+<div>
+    <h4>Tareas</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Titulo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Titulo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Proyecto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Proyecto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Prioridad)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Prioridad)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Entrega)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Entrega)
+        </dd>
+
+    </dl>
+</div>
+
+<input type="button" value="Marcar como Finalizada" onclick="location.href='@Url.Action("Finalizada", "Tarea")'" />
+
+@Html.ActionLink("Cerrar sesion", "Index", "Tarea")

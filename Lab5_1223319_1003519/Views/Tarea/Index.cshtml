@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Iniciar Sesion</h2>
+<br />
+<center>
+    @using (Html.BeginForm("Index",
+                            "Tarea",
+                            FormMethod.Post,
+                            new { enctype = "multipart/form-data" }))
+    {
+        <p>Nombre: </p><input type="text" class="form-control" name="name" placeholder="Nombre" />
+        <p>Contraseña: </p><input type="password" class="form-control" name="password" placeholder="Contraseña" />
+        <button type="submit">IniciarSesion</button>
+    }
+    <p>¿No tienes una cuenta?</p>
+    @Html.ActionLink("Registrate", "SignIn", "Tarea")
+</center>

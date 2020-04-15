@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Lab5_1223319_1003519.Helpers;
 using Lab5_1223319_1003519.Models;
+using System.Text;
 using System.IO;
 using ClasesGenericas.Estructuras;
 
@@ -127,8 +128,9 @@ namespace Lab5_1223319_1003519.Controllers
         }
 
         private bool UsuarioExiste(string name, string password)
-        {
-            return false;
+        { //////////////////////////
+            // estba false
+            return true;
         }
 
         private void CargarDatos()
@@ -146,7 +148,23 @@ namespace Lab5_1223319_1003519.Controllers
         private void LlenarTablaHash()
         {
             Tareas nuevo = new Tareas();
-            Storage.Instance.infoTareas.Add(nuevo, tarea => (tarea.Titulo.Length * 7) % 20);
+            nuevo.Titulo = "Hacer progra";
+            nuevo.Prioridad = 5;
+            Tareas nuevos = new Tareas();
+            nuevos.Titulo = "Hacer progra";
+            nuevos.Prioridad = 5;
+            Storage.Instance.infoTareas.Add(nuevo, tarea => (KeyHash(tarea.Titulo) * 7) % 20);
+            Storage.Instance.infoTareas.Add(nuevos, tarea => (KeyHash(tarea.Titulo) * 7) % 20);
+        }
+
+
+        private int KeyHash(string name){
+            int key = 0;
+        for (int i = 0; i < name.Length; i++)
+			{
+                key += Encoding.ASCII.GetBytes(name)[i];
+			}
+            return key;
         }
     }
 }

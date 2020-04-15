@@ -14,12 +14,19 @@ namespace ClasesGenericas.Estructuras
         {
             for (int i = 0; i < Arreglo.Length; i++)
                 Arreglo[i] = new List<T>();
+        
+        
         }
+
 
         public void Add(T value, Func<T,int> llave)
         {
+            
+           //if( Arreglo[llave(value)] != null){
             Arreglo[llave(value)].Add(value);
+            
         }
+     
 
         public T Remove(T value, Func<T, int> llave)
         {

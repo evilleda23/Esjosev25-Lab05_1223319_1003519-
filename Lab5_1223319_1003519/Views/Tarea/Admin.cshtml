@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Lab5_1223319_1003519.Models.InfoDesarrollador>
+
+@{
+    ViewBag.Title = "Admin";
+}
+
+<h2>Tareas actuales</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Desarrollador)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Titulo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Prioridad)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Desarrollador)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Prioridad)
+            </td>
+        </tr>
+    }
+
+</table>
+
+@Html.ActionLink("Cerrar sesion", "Index", "Tarea")

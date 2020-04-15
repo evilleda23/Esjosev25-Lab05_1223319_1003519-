@@ -23,7 +23,8 @@ namespace Lab5_1223319_1003519.Helpers
         public bool admin = false;
         public string name;
         public bool PrimeraSesion = true;
-        public TablaHash<Tareas> infoTareas = new TablaHash<Tareas>();
+        public TablaHash<InfoTarea> infoTareas = new TablaHash<InfoTarea>();
+        public ColaPrioridad<TituloTarea> tareasUsuario = new ColaPrioridad<TituloTarea>();
         /*public Arbol<Farmaco> Indice = new Arbol<Farmaco>();
         public Arbol<Farmaco> SinExistencias = new Arbol<Farmaco>();
         public List<FarmacoPrecio> Pedidos = new List<FarmacoPrecio>();

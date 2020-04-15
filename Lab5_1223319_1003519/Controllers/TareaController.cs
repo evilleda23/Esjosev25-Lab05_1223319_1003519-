@@ -25,14 +25,14 @@ namespace Lab5_1223319_1003519.Controllers
             {
                 if (Storage.Instance.PrimeraSesion)
                 {
-                    LlenarTablaHash();
-                    Storage.Instance.PrimeraSesion = false;
+                    if (LlenarTablaHash())
+                        Storage.Instance.PrimeraSesion = false;
                 }
-                CargarDatos();
+                LlenarCola();
                 if (Storage.Instance.admin)
-                    return View();
+                    return RedirectToAction("Admin");
                 else
-                    return View();
+                    return RedirectToAction("ProximaTarea");
             }
             else
                 return RedirectToAction("Index");
@@ -46,7 +46,24 @@ namespace Lab5_1223319_1003519.Controllers
         [HttpPost]
         public ActionResult SignIn(FormCollection collection)
         {
-            return View();
+            if (NombreUsuarioValido(collection["name"]))
+            {
+                if (collection["password"] == collection["password2"] && !collection["password"].Contains(','))
+                {
+                    if (Storage.Instance.PrimeraSesion)
+                    {
+                        if (LlenarTablaHash())
+                            Storage.Instance.PrimeraSesion = false;
+                    }
+                    AgregarUsuario(collection["name"], collection["password"]);
+                    LlenarCola();
+                    return RedirectToAction("ProximaTarea");
+                }
+                else
+                    return RedirectToAction("SignIn");
+            }
+            else
+                return RedirectToAction("SignIn");
         }
 
         // GET: Tarea/Details/5
@@ -123,30 +140,216 @@ namespace Lab5_1223319_1003519.Controllers
 
         public ActionResult ProximaTarea()
         {
+            if (Storage.Instance.tareasUsuario.Get() != null)
+            {
+                if (Storage.Instance.infoTareas.Search(Storage.Instance.tareasUsuario.Get().ToInfoTarea(), tarea => tarea.Titulo) != null)
+                    return View("ProximaTarea", Storage.Instance.infoTareas.Search(Storage.Instance.tareasUsuario.Get().ToInfoTarea(), tarea => tarea.Titulo).ToTareas());
+                else
+                    return RedirectToAction("NuevaTarea");
+            }
+            return RedirectToAction("NuevaTarea");
+        }
+
+        public ActionResult NuevaTarea()
+        {
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult NuevaTarea(FormCollection collection)
+        {
+            return RedirectToAction("ProximaTarea");
+        }
+
+        public ActionResult Finalizada()
+        {
+            Storage.Instance.infoTareas.Delete(Storage.Instance.tareasUsuario.Remove(TituloTarea.CompararPrioridad).ToInfoTarea(), tarea => tarea.Titulo);
+            Sobreescribir();
+            return RedirectToAction("ProximaTarea");
+        }
+
+        private bool NombreUsuarioValido(string name)
+        {
+            try
+            {
+                if (name.Contains(","))
+                    return false;
+                else
+                {
+                    string path = Server.MapPath("/Usuarios.csv");
+                    string texto = "";
+                    using (StreamReader lector = new StreamReader(path))
+                    {
+                        texto = lector.ReadToEnd();
+                    }
+                    if (texto.Contains(name))
+                        return false;
+                    else
+                    {
+                        Storage.Instance.name = name;
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private bool UsuarioExiste(string name, string password)
         {
-            return false;
+            try
+            {
+                if (name.Contains(",") || password.Contains(","))
+                    return false;
+                else
+                {
+                    string path = Server.MapPath("/Usuarios.csv");
+                    string texto = "";
+                    using (StreamReader lector = new StreamReader(path))
+                    {
+                        texto = lector.ReadToEnd();
+                    }
+                    if (texto.IndexOf(name) >= 0)
+                    {
+                        texto = texto.Remove(0, texto.IndexOf(name));
+                        texto = texto.Remove(0, texto.IndexOf(',') + 1);
+                        if (texto.Contains("\r\n"))
+                            texto = texto.Substring(0, texto.IndexOf("\r\n"));
+                        if (texto == password)
+                        {
+                            Storage.Instance.name = name;
+                            if (name == "admin")
+                                Storage.Instance.admin = true;
+                            else
+                                Storage.Instance.admin = false;
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                    else
+                        return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        private void CargarDatos()
+        private void LlenarCola()
         {
-            if (Storage.Instance.admin)
+            if (!Storage.Instance.admin)
             {
-
-            }
-            else
-            {
-
+                List<InfoTarea> tareas = Storage.Instance.infoTareas.Items();
+                foreach (InfoTarea tarea in tareas)
+                {
+                    if (tarea.Desarrollador == Storage.Instance.name)
+                        Storage.Instance.tareasUsuario.Add(tarea.ToTituloTarea(), TituloTarea.CompararPrioridad);
+                }
             }
         }
 
-        private void LlenarTablaHash()
+        private bool LlenarTablaHash()
         {
-            Tareas nuevo = new Tareas();
-            Storage.Instance.infoTareas.Add(nuevo, tarea => (tarea.Titulo.Length * 7) % 20);
+            try
+            {
+                string path = Server.MapPath("/Tareas.csv");
+                string texto = "";
+                using (StreamReader lector = new StreamReader(path))
+                {
+                    texto = lector.ReadToEnd();
+                }
+                string[] text = texto.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 1; i < text.Length; i++)
+                {
+                    if (text[i] != "")
+                    {
+                        InfoTarea nuevo = new InfoTarea
+                        {
+                            Desarrollador = text[i].Substring(0, text[i].IndexOf(","))
+                        };
+                        text[i] = text[i].Remove(0, text[i].IndexOf(",") + 1);
+                        if (text[i].IndexOf('\"') == 0)
+                        {
+                            text[i] = text[i].Remove(0, 1);
+                            nuevo.Titulo = text[i].Substring(0, text[i].IndexOf('\"'));
+                            text[i] = text[i].Remove(0, text[i].IndexOf('\"') + 2);
+                        }
+                        else
+                        {
+                            nuevo.Titulo = text[i].Substring(0, text[i].IndexOf(','));
+                            text[i] = text[i].Substring(text[i].IndexOf(',') + 1);
+                        }
+                        if (text[i].IndexOf('\"') == 0)
+                        {
+                            text[i] = text[i].Remove(0, 1);
+                            nuevo.Descripcion = text[i].Substring(0, text[i].IndexOf('\"'));
+                            text[i] = text[i].Remove(0, text[i].IndexOf('\"') + 2);
+                        }
+                        else
+                        {
+                            nuevo.Descripcion = text[i].Substring(0, text[i].IndexOf(','));
+                            text[i] = text[i].Substring(text[i].IndexOf(',') + 1);
+                        }
+                        if (text[i].IndexOf('\"') == 0)
+                        {
+                            text[i] = text[i].Remove(0, 1);
+                            nuevo.Proyecto = text[i].Substring(0, text[i].IndexOf('\"'));
+                            text[i] = text[i].Remove(0, text[i].IndexOf('\"') + 2);
+                        }
+                        else
+                        {
+                            nuevo.Proyecto = text[i].Substring(0, text[i].IndexOf(','));
+                            text[i] = text[i].Substring(text[i].IndexOf(',') + 1);
+                        }
+                        nuevo.Entrega = DateTime.Parse(text[i].Substring(0, text[i].IndexOf(',')));
+                        text[i] = text[i].Substring(text[i].IndexOf(',') + 1);
+                        nuevo.Prioridad = Int32.Parse(text[i]);
+                        Storage.Instance.infoTareas.Add(nuevo, tarea => tarea.Titulo);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void Sobreescribir()
+        {
+            try
+            {
+                List<InfoTarea> tareas = Storage.Instance.infoTareas.Items();
+                string path = Server.MapPath("/Tareas.csv");
+                using (StreamWriter lector = new StreamWriter(path, false))
+                {
+                    lector.Write("desarrollador,titulo,descripcion,proyecto,fecha de entrega,prioridad");
+                    foreach (InfoTarea tarea in tareas)
+                        lector.Write("\r\n" + tarea.String());
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void AgregarUsuario(string name, string password)
+        {
+            try
+            {
+                string path = Server.MapPath("/Usuarios.csv");
+                using (StreamWriter lector = new StreamWriter(path, true))
+                {
+                    lector.Write("\r\n" + name + "," + password);
+                }
+            }
+            catch
+            {
+            }
         }
     }
 }

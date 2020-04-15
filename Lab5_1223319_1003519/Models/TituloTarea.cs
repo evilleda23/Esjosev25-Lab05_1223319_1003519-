@@ -14,5 +14,10 @@ namespace Lab5_1223319_1003519.Models
         {
             return t1.Prioridad.CompareTo(t2.Prioridad);
         };
+
+        public InfoTarea ToInfoTarea()
+        {
+            return new InfoTarea{ Titulo = this.Titulo, Prioridad = this.Prioridad };
+        }
     }
 }

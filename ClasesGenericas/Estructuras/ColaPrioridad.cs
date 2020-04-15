@@ -35,14 +35,14 @@ namespace ClasesGenericas.Estructuras
                 if (direcciones.Pop() == 0)
                 {
                     posicion.Izquierda = new Nodo<T> { Valor = nuevo };
+                    posicion.Izquierda.Padre = posicion;
                     posicion = posicion.Izquierda;
-                    posicion.Padre = posicion;
                 }
                 else
                 {
                     posicion.Derecha = new Nodo<T> { Valor = nuevo };
+                    posicion.Derecha.Padre = posicion;
                     posicion = posicion.Derecha;
-                    posicion.Padre = posicion;
                 }
                 while (posicion.Padre != null)
                 {
@@ -84,13 +84,11 @@ namespace ClasesGenericas.Estructuras
                     }
                     if (direcciones.Pop() == 0)
                     {
-                        posicion = posicion.Izquierda;
-                        posicion.Padre.Izquierda = null;
+                        posicion.Izquierda = null;
                     }
                     else
                     {
-                        posicion = posicion.Derecha;
-                        posicion.Padre.Derecha = null;
+                        posicion.Derecha = null;
                     }
                     Raiz.Valor = posicion.Valor;
                     posicion = Raiz;

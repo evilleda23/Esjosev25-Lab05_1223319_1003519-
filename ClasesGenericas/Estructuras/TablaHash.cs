@@ -16,24 +16,57 @@ namespace ClasesGenericas.Estructuras
                 Arreglo[i] = new List<T>();
         }
 
-        public void Add(T value, Func<T,int> llave)
+        public void Add(T value, Func<T,string> llave)
         {
-            Arreglo[llave(value)].Add(value);
+            Arreglo[FuncionHash(llave(value))].Add(value);
         }
 
-        public T Remove(T value, Func<T, int> llave)
+        public T Remove(T value, Func<T, string> llave)
         {
-            return default(T);
+            T resultado = default(T);
+            foreach (T item in Arreglo[FuncionHash(llave(value))])
+            {
+                if (llave(item).Equals(llave(value)))
+                {
+                    resultado = item;
+                    Arreglo[FuncionHash(llave(value))].Remove(item);
+                }
+            }
+            return resultado;
         }
 
-        public void Delete(T value, Func<T, int> llave)
+        public void Delete(T value, Func<T, string> llave)
         {
             Remove(value, llave);
         }
 
-        public T Search(T value, Func<T, int> llave)
+        public T Search(T value, Func<T, string> llave)
         {
-            return default(T);
+            T resultado = default(T);
+            foreach (T item in Arreglo[FuncionHash(llave(value))])
+            {
+                if (llave(item).Equals(llave(value)))
+                    resultado = item;
+            }
+            return resultado;
+        }
+
+        public List<T> Items()
+        {
+            List<T> valores = new List<T>();
+            foreach (List<T> list in Arreglo)
+            {
+                foreach (T item in list)
+                {
+                    valores.Add(item);
+                }
+            }
+            return valores;
+        }
+
+        private int FuncionHash(string llave)
+        {
+            return (llave.Length * 7) % 20;
         }
     }
 }

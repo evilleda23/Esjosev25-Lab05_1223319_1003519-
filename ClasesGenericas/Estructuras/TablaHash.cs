@@ -18,18 +18,19 @@ namespace ClasesGenericas.Estructuras
 
         public void Add(T value, Func<T,string> llave)
         {
-            Arreglo[FuncionHash(llave(value))].Add(value);
+            if (!Arreglo[FuncionHash(llave(value))].Contains(value))
+                Arreglo[FuncionHash(llave(value))].Add(value);
         }
 
         public T Remove(T value, Func<T, string> llave)
         {
             T resultado = default(T);
-            foreach (T item in Arreglo[FuncionHash(llave(value))])
+            for (int i = 0; i < Arreglo[FuncionHash(llave(value))].Count; i++)
             {
-                if (llave(item).Equals(llave(value)))
+                if (llave(Arreglo[FuncionHash(llave(value))][i]).Equals(llave(value)))
                 {
-                    resultado = item;
-                    Arreglo[FuncionHash(llave(value))].Remove(item);
+                    resultado = Arreglo[FuncionHash(llave(value))][i];
+                    Arreglo[FuncionHash(llave(value))].Remove(Arreglo[FuncionHash(llave(value))][i]);
                 }
             }
             return resultado;

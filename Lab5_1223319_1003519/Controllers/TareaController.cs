@@ -147,7 +147,8 @@ namespace Lab5_1223319_1003519.Controllers
                 else
                     return RedirectToAction("NuevaTarea");
             }
-            return RedirectToAction("NuevaTarea");
+            else
+                return RedirectToAction("NuevaTarea");
         }
 
         public ActionResult NuevaTarea()
@@ -158,7 +159,25 @@ namespace Lab5_1223319_1003519.Controllers
         [HttpPost]
         public ActionResult NuevaTarea(FormCollection collection)
         {
-            return RedirectToAction("ProximaTarea");
+
+            try
+            {
+                InfoTarea nuevo = new InfoTarea { Desarrollador = Storage.Instance.name, Titulo = collection["Titulo"], Descripcion = collection["Descripcion"],
+                    Proyecto = collection["Proyecto"], Entrega = DateTime.Parse(collection["Entrega"]), Prioridad = int.Parse(collection["Prioridad"]) };
+                if (Storage.Instance.infoTareas.Search(nuevo, tarea => tarea.Titulo) == null)
+                {
+                    Storage.Instance.infoTareas.Add(nuevo, tarea => tarea.Titulo);
+                    Storage.Instance.tareasUsuario.Add(nuevo.ToTituloTarea(), TituloTarea.CompararPrioridad);
+                    Sobreescribir();
+                    return RedirectToAction("ProximaTarea");
+                }
+                else
+                    return RedirectToAction("NuevaTarea");
+            }
+            catch
+            {
+                return RedirectToAction("NuevaTarea");
+            }
         }
 
         public ActionResult Finalizada()
@@ -166,6 +185,18 @@ namespace Lab5_1223319_1003519.Controllers
             Storage.Instance.infoTareas.Delete(Storage.Instance.tareasUsuario.Remove(TituloTarea.CompararPrioridad).ToInfoTarea(), tarea => tarea.Titulo);
             Sobreescribir();
             return RedirectToAction("ProximaTarea");
+        }
+
+        public ActionResult Admin()
+        {
+            List<InfoTarea> infoTareas = Storage.Instance.infoTareas.Items();
+            List<InfoDesarrollador> tareas = new List<InfoDesarrollador>();
+            foreach(InfoTarea tarea in infoTareas)
+            {
+                tareas.Add(tarea.ToInfoDesarrollador());
+            }
+            tareas.Sort();
+            return View(tareas);
         }
 
         private bool NombreUsuarioValido(string name)
@@ -243,6 +274,7 @@ namespace Lab5_1223319_1003519.Controllers
         {
             if (!Storage.Instance.admin)
             {
+                Storage.Instance.tareasUsuario.Clear();
                 List<InfoTarea> tareas = Storage.Instance.infoTareas.Items();
                 foreach (InfoTarea tarea in tareas)
                 {

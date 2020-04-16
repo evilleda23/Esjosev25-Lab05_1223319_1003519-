@@ -4,12 +4,12 @@
     ViewBag.Title = "ProximaTarea";
 }
 
-@Html.ActionLink("Agregar Tarea", "Create", "Tarea")
+<br />
+<input type="button" value="Agregar Tarea" onclick="location.href='@Url.Action("NuevaTarea", "Tarea")'" />
 
 <h2>Proxima Tarea</h2>
 
 <div>
-    <h4>Tareas</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -56,5 +56,5 @@
 </div>
 
 <input type="button" value="Marcar como Finalizada" onclick="location.href='@Url.Action("Finalizada", "Tarea")'" />
-
+<br />
 @Html.ActionLink("Cerrar sesion", "Index", "Tarea")

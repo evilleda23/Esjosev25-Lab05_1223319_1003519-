@@ -34,7 +34,7 @@ namespace Lab5_1223319_1003519.Models
                 texto += "\"" + Proyecto + "\"" + ",";
             else
                 texto += Proyecto + ",";
-            texto += Entrega.ToString("MM/dd/yyyy") + ",";
+            texto += Entrega.ToString("dd/MM/yyyy") + ",";
             texto += Prioridad.ToString();
             return texto;
         }
@@ -42,6 +42,11 @@ namespace Lab5_1223319_1003519.Models
         public Tareas ToTareas()
         {
             return new Tareas { Titulo = this.Titulo, Descripcion = this.Descripcion, Proyecto = this.Proyecto, Entrega = this.Entrega, Prioridad = this.Prioridad };
+        }
+
+        public InfoDesarrollador ToInfoDesarrollador()
+        {
+            return new InfoDesarrollador { Titulo = this.Titulo, Desarrollador = this.Desarrollador, Prioridad = this.Prioridad };
         }
     }
 }

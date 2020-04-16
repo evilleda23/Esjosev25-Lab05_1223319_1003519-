@@ -84,13 +84,14 @@ namespace ClasesGenericas.Estructuras
                     }
                     if (direcciones.Pop() == 0)
                     {
+                        Raiz.Valor = posicion.Izquierda.Valor;
                         posicion.Izquierda = null;
                     }
                     else
                     {
+                        Raiz.Valor = posicion.Derecha.Valor;
                         posicion.Derecha = null;
                     }
-                    Raiz.Valor = posicion.Valor;
                     posicion = Raiz;
                     while (posicion.Izquierda != null)
                     {
@@ -145,6 +146,12 @@ namespace ClasesGenericas.Estructuras
                 return Raiz.Valor;
             else
                 return default(T);
+        }
+
+        public void Clear()
+        {
+            Raiz = null;
+            Count = 0;
         }
     }
 }

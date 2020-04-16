@@ -97,7 +97,7 @@ namespace ClasesGenericas.Estructuras
                     {
                         if (posicion.Derecha != null)
                         {
-                            if (comparer.Invoke(posicion.Valor, posicion.Izquierda.Valor) < 0 && comparer.Invoke(posicion.Valor, posicion.Derecha.Valor) < 0)
+                            if (comparer.Invoke(posicion.Valor, posicion.Izquierda.Valor) <= 0 && comparer.Invoke(posicion.Valor, posicion.Derecha.Valor) <= 0)
                                 posicion = new Nodo<T>();
                             else
                             {
@@ -117,7 +117,7 @@ namespace ClasesGenericas.Estructuras
                         }
                         else
                         {
-                            if (comparer.Invoke(posicion.Valor, posicion.Izquierda.Valor) < 0)
+                            if (comparer.Invoke(posicion.Valor, posicion.Izquierda.Valor) <= 0)
                                 posicion = new Nodo<T>();
                             else
                             {

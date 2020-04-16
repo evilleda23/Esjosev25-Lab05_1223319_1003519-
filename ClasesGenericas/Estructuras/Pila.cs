@@ -44,6 +44,7 @@ namespace ClasesGenericas.Estructuras
                 Head = Head.Anterior;
                 if (Head != null)
                     Head.Siguiente = null;
+                Count--;
                 return valor;
             }
             else

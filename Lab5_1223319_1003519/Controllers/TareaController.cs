@@ -164,7 +164,7 @@ namespace Lab5_1223319_1003519.Controllers
             {
                 InfoTarea nuevo = new InfoTarea { Desarrollador = Storage.Instance.name, Titulo = collection["Titulo"], Descripcion = collection["Descripcion"],
                     Proyecto = collection["Proyecto"], Entrega = DateTime.Parse(collection["Entrega"]), Prioridad = int.Parse(collection["Prioridad"]) };
-                if (Storage.Instance.infoTareas.Search(nuevo, tarea => tarea.Titulo) == null)
+                if (Storage.Instance.infoTareas.Search(nuevo, tarea => tarea.Titulo) == null && nuevo.Prioridad >= 0)
                 {
                     Storage.Instance.infoTareas.Add(nuevo, tarea => tarea.Titulo);
                     Storage.Instance.tareasUsuario.Add(nuevo.ToTituloTarea(), TituloTarea.CompararPrioridad);
